@@ -24,3 +24,6 @@ positional arguments:
     -h, --help  show this help message and exit
 ```
 
+### License
+
+GNU General Public License v3.0
