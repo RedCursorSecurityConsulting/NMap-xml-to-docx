@@ -16,10 +16,6 @@ def add_if_exists(output, dictionairy, key):
     else:
         output.append("")
 
-file_handle = open('./output.xml')
-
-xml = BeautifulSoup(file_handle, features="lxml")
-
 def parse_file(xml):
     hosts = []
 
