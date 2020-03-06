@@ -137,9 +137,6 @@ def parse_args():
 def main():
     infile_name, outfile_name = parse_args()
 
-    infile_name = "output.xml"
-    outfile_name = "formatted-nmap.docx"
-
     file_handle = open(infile_name, 'r')
 
     xml = BeautifulSoup(file_handle, features="lxml")
