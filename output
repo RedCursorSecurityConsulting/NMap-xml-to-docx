@@ -1,0 +1,2 @@
+# Nmap 7.80 scan initiated Thu Mar 12 09:17:38 2020 as: nmap -O -vv -o output localhost
+Warning: Hostname localhost resolves to 2 IPs. Using 127.0.0.1.

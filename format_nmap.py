@@ -3,6 +3,7 @@ from docx.oxml.shared import OxmlElement,  qn
 from docx.shared import Inches
 from bs4 import BeautifulSoup
 import argparse
+import datetime
 
 def shade_cell(cell, shade):
     tcPr = cell._tc.get_or_add_tcPr()
@@ -50,9 +51,17 @@ def parse_file(xml):
 
             ports_table.append(port_table)
 
-        port_message = "The {} ports scanned but not shown above are in state: {}".format(host.extraports["count"], host.extraports["state"])
+        port_message = None
 
-        hosts.append([addresses, hostnames, ports_table, port_message])
+        if host.extraports:
+            port_message = "The {} ports scanned but not shown above are in state: {}".format(host.extraports["count"], host.extraports["state"])
+
+        uptime = None
+
+        if host.uptime:
+            uptime = str(datetime.timedelta(seconds=int(host.uptime["seconds"])))
+
+        hosts.append([addresses, hostnames, ports_table, port_message, uptime])
 
     return hosts
 
@@ -66,8 +75,11 @@ def create_docx(hosts):
     for host in hosts:
         table = document.add_table(rows=1, cols=1)
 
-        addresses_table = table.rows[0].cells[0].add_table(rows=1 + len(host[0]), cols=1)
-        addresses_table.rows[0].cells[0].text = "Addresses"
+        addresses_table = table.rows[0].cells[0].add_table(rows=1 + len(host[0]), cols=2)
+        addresses_table.rows[0].cells[0].text = "Address"
+
+        if not host[4] is None:
+            addresses_table.rows[1].cells[1].text = "Uptime: {}".format(host[4])
 
         for idx, hostname in enumerate(host[0]):
             addresses_table.rows[1 + idx].cells[0].text = hostname
@@ -78,7 +90,12 @@ def create_docx(hosts):
         for idx, hostname in enumerate(host[1]):
             hostname_table.rows[1 + idx].cells[0].text = hostname
 
-        port_table = table.rows[0].cells[0].add_table(rows=2 + len(host[2]), cols=6)
+        rows = 1 + len(host[2])
+
+        if not host[3] is None:
+            rows += 1
+
+        port_table = table.rows[0].cells[0].add_table(rows=rows, cols=6)
 
         port_table.rows[0].cells[0].merge(port_table.rows[0].cells[1])
         port_table.rows[0].cells[0].text = "Port"
@@ -87,10 +104,11 @@ def create_docx(hosts):
         port_table.rows[0].cells[4].text = "Product"
         port_table.rows[0].cells[5].text = "Version"
 
-        for i in range(1,6):
-            port_table.rows[-1].cells[0].merge(port_table.rows[-1].cells[i])
 
-        port_table.rows[-1].cells[0].text = host[3]
+        if host[3]:
+            for i in range(1,6):
+                port_table.rows[-1].cells[0].merge(port_table.rows[-1].cells[i])
+            port_table.rows[-1].cells[0].text = host[3]
 
         for i, port_list in enumerate(host[2]):
             color = "#00000"
