@@ -1,0 +1,2 @@
+python-docx
+bs4
