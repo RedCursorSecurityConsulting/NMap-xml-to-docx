@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 from docx import Document
 from docx.oxml.shared import OxmlElement,  qn
