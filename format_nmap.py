@@ -1,3 +1,4 @@
+import os
 from docx import Document
 from docx.oxml.shared import OxmlElement,  qn
 from docx.shared import Inches
@@ -66,7 +67,9 @@ def parse_file(xml):
     return hosts
 
 def create_docx(hosts):
-    document = Document('./table-template.docx')
+    doc_path = os.path.dirname(os.path.realpath(__file__)) + '/table-template.docx' if __name__ else './table-template.docx'
+
+    document = Document(doc_path)
 
     document.add_heading('Nmap Results', 1)
 
