@@ -14,6 +14,9 @@ def shade_cell(cell, shade):
     tcPr.append(tcVAlign)
 
 def add_if_exists(output, dictionairy, key):
+    if not dictionairy:
+        return
+
     if dictionairy.has_attr(key):
         output.append(dictionairy[key])
     else:
